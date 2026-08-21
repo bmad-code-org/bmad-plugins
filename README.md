@@ -38,8 +38,6 @@ Then install the plugins you want.
 
 ## Release
 
-`python3 release.py` rebuilds both plugins from the skills source repo
-([bmad-code-org/bmad-skills](https://github.com/bmad-code-org/bmad-skills)):
-it routes each skill by the `module` key in its `module-manifest.toml` and
-stamps the (single, uniform) skill version into each plugin's Codex manifest
-and its Claude marketplace entry. Review and commit the result.
+`python3 release.py` rebuilds both plugins from the current release of
+[bmad-code-org/bmad-skills](https://github.com/bmad-code-org/bmad-skills).
+Review and commit the result.
