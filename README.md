@@ -2,8 +2,8 @@
 
 Plugin distribution for the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD),
 covering every agent platform except two that ship elsewhere: the Claude Code
-plugin lives in [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
-itself, and Vercel/skills.sh installs from
+plugin lives in [bmad-skills](https://github.com/bmad-code-org/bmad-skills)
+itself, and Vercel/skills.sh also installs from
 [bmad-skills](https://github.com/bmad-code-org/bmad-skills).
 
 This repository exists only for distribution. Development, issues, and pull
