@@ -35,9 +35,3 @@ codex plugin marketplace add bmad-code-org/bmad-plugins
 ```
 
 Then install the plugins you want.
-
-## Release
-
-`python3 release.py` rebuilds both plugins from the current release of
-[bmad-code-org/bmad-skills](https://github.com/bmad-code-org/bmad-skills).
-Review and commit the result.
