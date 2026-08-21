@@ -1,6 +1,6 @@
 {
   "name": "bmad-method",
-  "version": "0.0.0-next.4",
+  "version": "0.0.0-next.5",
   "description": "BMAD Method core — agents and workflows for product analysis, planning, architecture, and implementation.",
   "author": {
     "name": "Brian (BMad) Madison"
