@@ -8,7 +8,7 @@
       "name": "bmad-bmm",
       "source": {
         "source": "local",
-        "path": "plugins/bmm"
+        "path": "./plugins/bmm"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -20,7 +20,7 @@
       "name": "bmad-tools",
       "source": {
         "source": "local",
-        "path": "plugins/tools"
+        "path": "./plugins/tools"
       },
       "policy": {
         "installation": "AVAILABLE",
