@@ -1,14 +1,21 @@
-# BMAD Method — Codex Plugins
+# BMAD Method — Plugins
 
-This repository is the [OpenAI Codex](https://developers.openai.com/codex/plugins/build) plugin marketplace for the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD).
+Plugin distribution for the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD),
+covering every agent platform except two that ship elsewhere: the Claude Code
+plugin lives in [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
+itself, and Vercel/skills.sh installs from
+[bmad-skills](https://github.com/bmad-code-org/bmad-skills).
 
-It exists only for distribution. Development, issues, and pull requests happen in
+This repository exists only for distribution. Development, issues, and pull
+requests happen in
 [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD).
 
-## Install
+## OpenAI Codex
+
+This repository is a [Codex plugin marketplace](https://developers.openai.com/codex/plugins/build):
 
 ```
-codex plugin marketplace add bmad-code-org/codex-plugins
+codex plugin marketplace add bmad-code-org/bmad-plugins
 ```
 
 Then install the plugins you want:

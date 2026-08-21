@@ -16,5 +16,13 @@
     "tools",
     "skills"
   ],
+  "interface": {
+    "displayName": "BMAD Tools",
+    "shortDescription": "BMAD tools — generally useful standalone skills from the BMAD Method.",
+    "longDescription": "Standalone skills extracted from the BMAD Method that are useful on their own, outside the full planning-to-implementation workflow. From the team behind BMAD-METHOD.",
+    "developerName": "BMad Code Open Source Team",
+    "category": "Productivity",
+    "websiteURL": "https://github.com/bmad-code-org/BMAD-METHOD"
+  },
   "skills": "./skills/"
 }
