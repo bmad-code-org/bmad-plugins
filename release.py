@@ -3,7 +3,9 @@
 
 Clones the source repo's default branch, reads every skill's
 module-manifest.toml, requires all skills to agree on one version, then
-rewrites each plugin's skills tree and stamps that version into its
+rewrites each plugin's skills tree (pointing each copied manifest's
+update_source at the plugin, e.g. plugin:bmad-method) and stamps that
+version into its
 .codex-plugin/plugin.json and into its entry in the Claude marketplace
 (.claude-plugin/marketplace.json — both ecosystems share the same skills
 trees). Routing: a skill's `module` key names the plugin directory it
@@ -92,6 +94,14 @@ def rebuild_plugin(name, skill_dirs, version):
     skills_dest.mkdir()
     for skill_dir in skill_dirs:
         shutil.copytree(skill_dir, skills_dest / skill_dir.name, ignore=COPY_IGNORE)
+        # Shipped copies are updated by updating the plugin, not the files;
+        # setup.py reads this and points users at their plugin marketplace.
+        copied = skills_dest / skill_dir.name / "module-manifest.toml"
+        text = copied.read_text()
+        old = f'update_source = "{UPDATE_SOURCE}"'
+        if text.count(old) != 1:
+            fail(f"{copied}: expected exactly one update_source line")
+        copied.write_text(text.replace(old, f'update_source = "plugin:bmad-{name}"'))
     if not skill_dirs:
         (skills_dest / ".gitkeep").touch()
 
