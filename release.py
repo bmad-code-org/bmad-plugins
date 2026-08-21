@@ -8,8 +8,8 @@ rewrites each plugin's skills tree and stamps that version into its
 (.claude-plugin/marketplace.json — both ecosystems share the same skills
 trees). Routing: a skill's `module` key names the plugin directory it
 ships in, and each manifest must carry exactly the keys module, version,
-and update_source with the one known source. Review and commit the
-result with git.
+update_source, and knowledge, the latter two with their one known value.
+Review and commit the result with git.
 
 Stdlib only. Usage: python3 release.py [--source URL]
 """
@@ -27,7 +27,8 @@ DEFAULT_SOURCE = "https://github.com/bmad-code-org/bmad-skills"
 REPO_ROOT = Path(__file__).resolve().parent
 PLUGINS = ("method", "toolbox")  # module key in module-manifest.toml -> plugins/<name>, plugin bmad-<name>
 UPDATE_SOURCE = "github:bmad-code-org/bmad-skills/skills"
-MANIFEST_KEYS = frozenset({"module", "version", "update_source"})
+KNOWLEDGE = "`reference/help.md` in the `bmad` skill"
+MANIFEST_KEYS = frozenset({"module", "version", "update_source", "knowledge"})
 CLAUDE_MARKETPLACE = REPO_ROOT / ".claude-plugin" / "marketplace.json"
 COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache")
 
@@ -53,6 +54,8 @@ def read_manifest(skill_dir):
         )
     if manifest["update_source"] != UPDATE_SOURCE:
         fail(f"{manifest_path}: update_source must be exactly {UPDATE_SOURCE!r}")
+    if manifest["knowledge"] != KNOWLEDGE:
+        fail(f"{manifest_path}: knowledge must be exactly {KNOWLEDGE!r}")
     return manifest
 
 
