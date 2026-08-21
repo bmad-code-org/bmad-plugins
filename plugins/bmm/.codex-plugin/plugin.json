@@ -1,0 +1,13 @@
+{
+  "name": "bmad-bmm",
+  "version": "6.11.0-next",
+  "description": "BMAD Method core — agents and workflows for product analysis, planning, architecture, and implementation.",
+  "author": {
+    "name": "Brian (BMad) Madison"
+  },
+  "homepage": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "repository": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "license": "MIT",
+  "keywords": ["bmad", "agile", "ai", "orchestrator", "development", "methodology", "agents"],
+  "skills": "./skills/"
+}

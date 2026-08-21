@@ -1,0 +1,13 @@
+{
+  "name": "bmad-tools",
+  "version": "6.11.0-next",
+  "description": "BMAD tools — generally useful standalone skills from the BMAD Method.",
+  "author": {
+    "name": "Brian (BMad) Madison"
+  },
+  "homepage": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "repository": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "license": "MIT",
+  "keywords": ["bmad", "agile", "ai", "development", "tools", "skills"],
+  "skills": "./skills/"
+}
