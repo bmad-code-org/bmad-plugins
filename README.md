@@ -28,7 +28,7 @@ Then install `bmad-method` and/or `bmad-toolbox` from it.
 
 ## OpenAI Codex
 
-This repository is also a [Codex plugin marketplace](https://developers.openai.com/codex/plugins/build):
+This repository is also a Codex plugin marketplace:
 
 ```
 codex plugin marketplace add bmad-code-org/bmad-plugins
