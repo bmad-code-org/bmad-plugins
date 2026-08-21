@@ -15,3 +15,11 @@ Then install the plugins you want:
 
 - **bmad-bmm** — the BMAD Method core: agents and workflows for product analysis, planning, architecture, and implementation.
 - **bmad-tools** — generally useful standalone skills.
+
+## Release
+
+`python3 release.py` rebuilds both plugins from the skills source repo
+([bmad-code-org/bmad-skills](https://github.com/bmad-code-org/bmad-skills)):
+it routes each skill by the `module` key in its `module-manifest.toml` and
+stamps the (single, uniform) skill version into each plugin manifest.
+Review and commit the result.

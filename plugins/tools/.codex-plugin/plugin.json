@@ -8,6 +8,13 @@
   "homepage": "https://github.com/bmad-code-org/BMAD-METHOD",
   "repository": "https://github.com/bmad-code-org/BMAD-METHOD",
   "license": "MIT",
-  "keywords": ["bmad", "agile", "ai", "development", "tools", "skills"],
+  "keywords": [
+    "bmad",
+    "agile",
+    "ai",
+    "development",
+    "tools",
+    "skills"
+  ],
   "skills": "./skills/"
 }

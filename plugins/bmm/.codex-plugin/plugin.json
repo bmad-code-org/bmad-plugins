@@ -8,6 +8,14 @@
   "homepage": "https://github.com/bmad-code-org/BMAD-METHOD",
   "repository": "https://github.com/bmad-code-org/BMAD-METHOD",
   "license": "MIT",
-  "keywords": ["bmad", "agile", "ai", "orchestrator", "development", "methodology", "agents"],
+  "keywords": [
+    "bmad",
+    "agile",
+    "ai",
+    "orchestrator",
+    "development",
+    "methodology",
+    "agents"
+  ],
   "skills": "./skills/"
 }
