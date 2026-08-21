@@ -1,14 +1,14 @@
 {
-  "name": "bmad-method",
+  "name": "bmad",
   "interface": {
-    "displayName": "BMad Method"
+    "displayName": "BMAD"
   },
   "plugins": [
     {
-      "name": "bmad-bmm",
+      "name": "bmad-method",
       "source": {
         "source": "local",
-        "path": "./plugins/bmm"
+        "path": "./plugins/method"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -17,10 +17,10 @@
       "category": "Productivity"
     },
     {
-      "name": "bmad-tools",
+      "name": "bmad-toolbox",
       "source": {
         "source": "local",
-        "path": "./plugins/tools"
+        "path": "./plugins/toolbox"
       },
       "policy": {
         "installation": "AVAILABLE",

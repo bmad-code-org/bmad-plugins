@@ -1,0 +1,28 @@
+{
+  "name": "bmad-toolbox",
+  "version": "6.11.0-next",
+  "description": "BMAD Toolbox — generally useful standalone skills from the BMAD Method.",
+  "author": {
+    "name": "Brian (BMad) Madison"
+  },
+  "homepage": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "repository": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "license": "MIT",
+  "keywords": [
+    "bmad",
+    "agile",
+    "ai",
+    "development",
+    "tools",
+    "skills"
+  ],
+  "interface": {
+    "displayName": "BMAD Toolbox",
+    "shortDescription": "BMAD Toolbox — generally useful standalone skills from the BMAD Method.",
+    "longDescription": "Standalone skills extracted from the BMAD Method that are useful on their own, outside the full planning-to-implementation workflow. From the team behind BMAD-METHOD.",
+    "developerName": "BMad Code Open Source Team",
+    "category": "Productivity",
+    "websiteURL": "https://github.com/bmad-code-org/BMAD-METHOD"
+  },
+  "skills": "./skills/"
+}

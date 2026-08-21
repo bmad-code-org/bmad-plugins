@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Rebuild the Codex plugins from the skills source repo.
+"""Rebuild the plugins from the skills source repo.
 
 Clones the source repo's default branch, reads every skill's
 module-manifest.toml, requires all skills to agree on one version, then
 rewrites each plugin's skills tree and stamps that version into its
-.codex-plugin/plugin.json. Routing: a skill's `module` key names the
-plugin directory it ships in. Review and commit the result with git.
+.codex-plugin/plugin.json and into its entry in the Claude marketplace
+(.claude-plugin/marketplace.json — both ecosystems share the same skills
+trees). Routing: a skill's `module` key names the plugin directory it
+ships in, and each manifest must carry exactly the keys module, version,
+and update_source with the one known source. Review and commit the
+result with git.
 
 Stdlib only. Usage: python3 release.py [--source URL]
 """
@@ -21,7 +25,10 @@ from pathlib import Path
 
 DEFAULT_SOURCE = "https://github.com/bmad-code-org/bmad-skills"
 REPO_ROOT = Path(__file__).resolve().parent
-PLUGINS = ("bmm", "tools")  # module key in module-manifest.toml -> plugins/<name>
+PLUGINS = ("method", "toolbox")  # module key in module-manifest.toml -> plugins/<name>, plugin bmad-<name>
+UPDATE_SOURCE = "github:bmad-code-org/bmad-skills/skills"
+MANIFEST_KEYS = frozenset({"module", "version", "update_source"})
+CLAUDE_MARKETPLACE = REPO_ROOT / ".claude-plugin" / "marketplace.json"
 COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache")
 
 
@@ -39,9 +46,13 @@ def read_manifest(skill_dir):
             manifest = tomllib.load(f)
         except tomllib.TOMLDecodeError as e:
             fail(f"{manifest_path}: {e}")
-    for key in ("module", "version"):
-        if key not in manifest:
-            fail(f"{manifest_path}: missing `{key}`")
+    if set(manifest) != MANIFEST_KEYS:
+        fail(
+            f"{manifest_path}: keys must be exactly {', '.join(sorted(MANIFEST_KEYS))}; "
+            f"found {', '.join(sorted(manifest)) or 'none'}"
+        )
+    if manifest["update_source"] != UPDATE_SOURCE:
+        fail(f"{manifest_path}: update_source must be exactly {UPDATE_SOURCE!r}")
     return manifest
 
 
@@ -87,6 +98,33 @@ def rebuild_plugin(name, skill_dirs, version):
     print(f"plugins/{name}: {len(skill_dirs)} skills, version {version}")
 
 
+def stamp_claude_marketplace(version):
+    if not CLAUDE_MARKETPLACE.is_file():
+        fail(f"missing {CLAUDE_MARKETPLACE}")
+    data = json.loads(CLAUDE_MARKETPLACE.read_text())
+    entries = {
+        entry.get("name"): entry
+        for entry in data.get("plugins", [])
+        if isinstance(entry, dict)
+    }
+    expected = [f"bmad-{name}" for name in PLUGINS]
+    if sorted(entries) != sorted(expected):
+        fail(
+            f"{CLAUDE_MARKETPLACE}: plugin entries must be exactly "
+            f"{', '.join(expected)}; found {', '.join(sorted(entries))}"
+        )
+    for name in PLUGINS:
+        entry = entries[f"bmad-{name}"]
+        if entry.get("source") != f"./plugins/{name}":
+            fail(
+                f"{CLAUDE_MARKETPLACE}: bmad-{name} source must be ./plugins/{name} "
+                "so Claude Code serves the same skills tree as Codex"
+            )
+        entry["version"] = version
+    CLAUDE_MARKETPLACE.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    print(f".claude-plugin/marketplace.json: {len(expected)} entries, version {version}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--source", default=DEFAULT_SOURCE, help="skills source repo URL (default: %(default)s)")
@@ -103,6 +141,7 @@ def main():
         by_module, version = collect_skills(Path(tmp) / "skills")
         for name in PLUGINS:
             rebuild_plugin(name, by_module[name], version)
+        stamp_claude_marketplace(version)
 
 
 if __name__ == "__main__":
