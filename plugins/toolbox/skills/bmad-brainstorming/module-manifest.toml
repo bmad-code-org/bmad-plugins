@@ -1,4 +1,4 @@
 module = "toolbox"
-version = "0.0.0-next.5"
+version = "0.0.0-next.6"
 update_source = "plugin:bmad-toolbox"
-knowledge = "`reference/help.md` in the `bmad` skill"
+knowledge = "`references/help.md` in the `bmad` skill"
