@@ -10,7 +10,9 @@ version into its
 (.claude-plugin/marketplace.json — both ecosystems share the same skills
 trees). Routing: a skill's `module` key names the plugin directory it
 ships in, and each manifest must carry exactly the keys module, version,
-update_source, and knowledge, the latter two with their one known value.
+update_source, and knowledge -- update_source with its one known value, and
+knowledge non-empty and identical across every skill in its module, whatever
+it says.
 Review and commit the result with git.
 
 Stdlib only. Usage: python3 release.py [--source URL]
@@ -29,7 +31,6 @@ DEFAULT_SOURCE = "https://github.com/bmad-code-org/bmad-skills"
 REPO_ROOT = Path(__file__).resolve().parent
 PLUGINS = ("method", "toolbox")  # module key in module-manifest.toml -> plugins/<name>, plugin bmad-<name>
 UPDATE_SOURCE = "github:bmad-code-org/bmad-skills/skills"
-KNOWLEDGE = "`references/help.md` in the `bmad` skill"
 MANIFEST_KEYS = frozenset({"module", "version", "update_source", "knowledge"})
 CLAUDE_MARKETPLACE = REPO_ROOT / ".claude-plugin" / "marketplace.json"
 COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache")
@@ -56,8 +57,8 @@ def read_manifest(skill_dir):
         )
     if manifest["update_source"] != UPDATE_SOURCE:
         fail(f"{manifest_path}: update_source must be exactly {UPDATE_SOURCE!r}")
-    if manifest["knowledge"] != KNOWLEDGE:
-        fail(f"{manifest_path}: knowledge must be exactly {KNOWLEDGE!r}")
+    if not isinstance(manifest["knowledge"], str) or not manifest["knowledge"].strip():
+        fail(f"{manifest_path}: knowledge must be a non-empty string")
     return manifest
 
 
@@ -67,6 +68,7 @@ def collect_skills(skills_root):
         fail(f"source repo has no skills/ directory at {skills_root}")
     by_module = {name: [] for name in PLUGINS}
     versions = {}
+    knowledge = {name: {} for name in PLUGINS}
     for skill_dir in sorted(p for p in skills_root.iterdir() if p.is_dir()):
         manifest = read_manifest(skill_dir)
         module = manifest["module"]
@@ -74,11 +76,18 @@ def collect_skills(skills_root):
             fail(f"{skill_dir.name}: unknown module `{module}` (expected one of {', '.join(PLUGINS)})")
         by_module[module].append(skill_dir)
         versions[skill_dir.name] = manifest["version"]
+        knowledge[module][skill_dir.name] = manifest["knowledge"]
     if not versions:
         fail("no skills found in source repo")
     if len(set(versions.values())) != 1:
         detail = ", ".join(f"{name}={v}" for name, v in sorted(versions.items()))
         fail(f"skills disagree on version: {detail}")
+    # A module speaks for itself, so its value is whatever it says -- but every
+    # skill in one module must say the same thing.
+    for module, values in sorted(knowledge.items()):
+        if len(set(values.values())) > 1:
+            detail = ", ".join(f"{name}={v!r}" for name, v in sorted(values.items()))
+            fail(f"module `{module}` skills disagree on knowledge: {detail}")
     return by_module, next(iter(versions.values()))
 
 
