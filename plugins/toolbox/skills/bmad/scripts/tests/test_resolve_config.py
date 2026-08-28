@@ -1,4 +1,5 @@
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -45,7 +46,7 @@ class ResolveConfigCliTests(unittest.TestCase):
                 '[core]\nname = "base"\nkeep = "yes"\n', encoding="utf-8"
             )
             (root / "_bmad" / "config.user.toml").write_text(
-                '[core]\nname = "base-user"\n', encoding="utf-8"
+                '[core]\nname = "base-user"\nstray = "ignored"\n', encoding="utf-8"
             )
             (custom / "config.toml").write_text(
                 '[core]\nname = "team"\n', encoding="utf-8"
@@ -56,6 +57,8 @@ class ResolveConfigCliTests(unittest.TestCase):
 
             full = self._run(root)
             self.assertEqual(full.returncode, 0, msg=full.stderr)
+            # _bmad/config.user.toml is old-installer debris, not a layer:
+            # its `stray` key never reaches the merge.
             self.assertEqual(json.loads(full.stdout)["core"], {"name": "user", "keep": "yes"})
 
             keyed = self._run(root, "--key", "core.name", "--key", "missing")
@@ -73,6 +76,33 @@ class ResolveConfigCliTests(unittest.TestCase):
             result = self._run(root)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("failed to parse", result.stderr)
+
+    def test_writes_emoji_json_when_stdout_encoding_is_cp1252(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "_bmad").mkdir(parents=True)
+            (root / "_bmad" / "config.toml").write_text(
+                '[agents]\nname = "Analyst"\nicon = "📊"\n',
+                encoding="utf-8",
+            )
+
+            env = os.environ.copy()
+            env["PYTHONIOENCODING"] = "cp1252"
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--project-root", str(root)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env=env,
+                check=False,
+            )
+
+            stderr = result.stderr.decode("utf-8", errors="replace")
+            self.assertEqual(result.returncode, 0, msg=stderr)
+
+            output = result.stdout.decode("utf-8")
+            self.assertIn("📊", output)
+            resolved = json.loads(output)
+            self.assertEqual(resolved["agents"]["icon"], "📊")
 
     @staticmethod
     def _run(root: Path, *args: str) -> subprocess.CompletedProcess[str]:

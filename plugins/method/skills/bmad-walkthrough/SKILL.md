@@ -1,9 +1,9 @@
 ---
-name: bmad-checkpoint-preview
-description: 'Walk the user through reviewing a change: what it is for, what to look at closely, and how to test it. Use when the user says "checkpoint", "human review", or "walk me through this change"'
+name: bmad-walkthrough
+description: 'Walk the user through reviewing a change: what it is for, what to look at closely, and how to test it. Use when the user says "walkthrough", "walk me through this change", or "human review"'
 ---
 
-# Checkpoint Review Workflow
+# Walkthrough Workflow
 
 **Goal:** Guide a human through reviewing a change — from purpose and context into details.
 
@@ -40,10 +40,7 @@ Treat every entry in `{workflow.persistent_facts}` as foundational context you c
 
 ### Step 4: Load Config
 
-Load config from `{project-root}/_bmad/bmm/config.yaml` and resolve:
-
-- `implementation_artifacts`
-- `planning_artifacts`
+Run: `uv run {project-root}/_bmad/scripts/resolve_config.py --project-root {project-root} --key modules.bmm.implementation_artifacts --key modules.bmm.planning_artifacts`
 
 ### Step 5: Greet the User
 
