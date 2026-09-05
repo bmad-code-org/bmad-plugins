@@ -2,7 +2,7 @@
 
 Plugin distribution for the [BMAD Method](https://github.com/bmad-code-org/BMAD-METHOD),
 covering every agent platform except Vercel/skills.sh, which installs
-straight from [bmad-skills](https://github.com/bmad-code-org/bmad-skills).
+straight from [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD).
 
 This repository exists only for distribution. Development, issues, and pull
 requests happen in

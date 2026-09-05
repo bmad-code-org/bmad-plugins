@@ -39,7 +39,7 @@ REPO_ROOT = Path(__file__).resolve().parent
 # Source repo -> the modules it ships. A module name is both the plugin
 # directory (plugins/<module>) and the plugin itself (bmad-<module>).
 SOURCES = {
-    "bmad-code-org/bmad-skills": ("method", "toolbox"),
+    "bmad-code-org/BMAD-METHOD": ("method", "toolbox"),
 }
 PLUGINS = tuple(module for modules in SOURCES.values() for module in modules)
 MANIFEST_KEYS = frozenset({"module", "version", "update_source", "knowledge"})

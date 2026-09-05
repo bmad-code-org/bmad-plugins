@@ -384,17 +384,19 @@ class RenderSkillTests(unittest.TestCase):
         )
         self.assertIn("No active review layers. HALT", review)
 
-    def test_empty_open_spec_override_clears_the_shipped_default(self):
+    def test_non_empty_open_spec_override_reaches_both_terminal_routes(self):
         ws = self._workspace()
         skill = self._skill(ws, "bmad-build")
         (ws.bmad / "custom" / f"{skill.name}.user.toml").write_text(
-            '[workflow]\nopen_spec = ""\n', encoding="utf-8"
+            '[workflow]\nopen_spec = "OPEN-SPEC-SENTINEL {project-root} {spec_file}"\n',
+            encoding="utf-8",
         )
         snap = rs.render(ws.project, skill).parent
         for name in ("step-05-present.md", "step-oneshot.md"):
             rendered = (snap / name).read_text(encoding="utf-8")
-            self.assertNotIn("code -r", rendered)
-            self.assertIn("Suggested Review Order", rendered)
+            self.assertIn(
+                "OPEN-SPEC-SENTINEL {project-root} {spec_file}", rendered
+            )
 
     def test_installed_renderer_identity_change_publishes_a_new_generation(self):
         ws = self._workspace()
