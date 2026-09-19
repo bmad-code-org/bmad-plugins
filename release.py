@@ -11,13 +11,14 @@ ecosystems share the same skills trees).
 Routing: SOURCES maps each source repo to the modules it ships, and a skill's
 `module` key names the plugin directory it ships in, so a module comes
 entirely from the one source that declares it. Each manifest must carry the
-keys module, version, update_source and knowledge, plus an optional requires
-table -- update_source naming its own source repo, and version identical
-across every skill in its module, whatever it says.
+keys module, version, update_source and knowledge, plus optional requires and
+recommends tables -- update_source naming its own source repo, and version
+identical across every skill in its module, whatever it says.
 
-knowledge lists documents inside the skill that names them, and requires is
-that skill's dependencies; both belong to the skill rather than the module, so
-skills of one module may differ on either. Both are copied through untouched.
+knowledge lists documents inside the skill that names them, requires is what
+that skill cannot work without, and recommends is what it works better with.
+All three belong to the skill rather than the module, so skills of one module
+may differ on any of them. All three are copied through untouched.
 
 A version belongs to a module, not to a release of this repo: what a plugin
 ships as is its own module's version, and two modules need not agree, whether
@@ -47,7 +48,7 @@ SOURCES = {
 }
 PLUGINS = tuple(module for modules in SOURCES.values() for module in modules)
 MANIFEST_KEYS = frozenset({"module", "version", "update_source", "knowledge"})
-OPTIONAL_MANIFEST_KEYS = frozenset({"requires"})
+OPTIONAL_MANIFEST_KEYS = frozenset({"requires", "recommends"})
 CLAUDE_MARKETPLACE = REPO_ROOT / ".claude-plugin" / "marketplace.json"
 COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache")
 
@@ -120,7 +121,7 @@ def collect_skills(skills_root, slug, modules):
         # A module speaks for itself, so its version is whatever it says -- but
         # every skill in one module must agree, because the plugin ships as one
         # version. Modules need not agree with each other, even within one
-        # source repo. knowledge and requires are per-skill.
+        # source repo. knowledge, requires and recommends are per-skill.
         versions = {skill_dir.name: manifest["version"] for skill_dir, manifest in entries}
         if len(set(versions.values())) > 1:
             detail = ", ".join(f"{name}={value!r}" for name, value in sorted(versions.items()))
