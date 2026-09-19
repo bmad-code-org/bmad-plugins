@@ -11,9 +11,10 @@ ecosystems share the same skills trees).
 Routing: SOURCES maps each source repo to the modules it ships, and a skill's
 `module` key names the plugin directory it ships in, so a module comes
 entirely from the one source that declares it. Each manifest must carry the
-keys module, version, update_source and knowledge, plus optional requires and
-recommends tables -- update_source naming its own source repo, and version
-identical across every skill in its module, whatever it says.
+keys module, version, update_source and knowledge -- update_source naming its
+own source repo, and version identical across every skill in its module,
+whatever it says. Any other key is the skill's own business: the runtime
+ignores keys it does not know, so this script does too.
 
 knowledge lists documents inside the skill that names them, requires is what
 that skill cannot work without, and recommends is what it works better with.
@@ -48,7 +49,6 @@ SOURCES = {
 }
 PLUGINS = tuple(module for modules in SOURCES.values() for module in modules)
 MANIFEST_KEYS = frozenset({"module", "version", "update_source", "knowledge"})
-OPTIONAL_MANIFEST_KEYS = frozenset({"requires", "recommends"})
 CLAUDE_MARKETPLACE = REPO_ROOT / ".claude-plugin" / "marketplace.json"
 COPY_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache")
 
@@ -75,13 +75,10 @@ def read_manifest(skill_dir, slug):
             manifest = tomllib.load(f)
         except tomllib.TOMLDecodeError as e:
             fail(f"{slug}/{skill_dir.name}: {e}")
-    keys = set(manifest)
-    if not MANIFEST_KEYS <= keys or not keys <= MANIFEST_KEYS | OPTIONAL_MANIFEST_KEYS:
-        fail(
-            f"{slug}/{skill_dir.name}: keys must be {', '.join(sorted(MANIFEST_KEYS))} "
-            f"plus optionally {', '.join(sorted(OPTIONAL_MANIFEST_KEYS))}; "
-            f"found {', '.join(sorted(manifest)) or 'none'}"
-        )
+    # The runtime ignores keys it does not know, so a build must not refuse them.
+    missing = MANIFEST_KEYS - set(manifest)
+    if missing:
+        fail(f"{slug}/{skill_dir.name}: manifest is missing {', '.join(sorted(missing))}")
     if manifest["update_source"] != update_source(slug):
         fail(f"{slug}/{skill_dir.name}: update_source must be exactly {update_source(slug)!r}")
     knowledge = manifest["knowledge"]
