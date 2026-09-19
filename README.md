@@ -11,10 +11,10 @@ requests happen in
 ## The plugins
 
 - **bmad-method** — the BMAD Method core: agents and workflows for product analysis, planning, architecture, and implementation.
-- **bmad-toolbox** — generally useful standalone skills.
+- **bmad-core-tools** — generally useful standalone skills.
 
 Both ecosystems below serve the same two skills trees
-(`plugins/method/skills/`, `plugins/toolbox/skills/`) with their own metadata.
+(`plugins/method/skills/`, `plugins/core-tools/skills/`) with their own metadata.
 
 ## Claude Code
 
@@ -24,7 +24,7 @@ This repository is a Claude Code plugin marketplace:
 /plugin marketplace add bmad-code-org/bmad-plugins
 ```
 
-Then install `bmad-method` and/or `bmad-toolbox` from it.
+Then install `bmad-method` and/or `bmad-core-tools` from it.
 
 ## OpenAI Codex
 

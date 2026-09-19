@@ -1,7 +1,7 @@
 {
-  "name": "bmad-toolbox",
+  "name": "bmad-core-tools",
   "version": "6.13.0-next",
-  "description": "BMAD Toolbox — generally useful standalone skills from the BMAD Method.",
+  "description": "BMAD Core Tools — generally useful standalone skills from the BMAD Method.",
   "author": {
     "name": "Brian (BMad) Madison"
   },
@@ -17,8 +17,8 @@
     "skills"
   ],
   "interface": {
-    "displayName": "BMAD Toolbox",
-    "shortDescription": "BMAD Toolbox — generally useful standalone skills from the BMAD Method.",
+    "displayName": "BMAD Core Tools",
+    "shortDescription": "BMAD Core Tools — generally useful standalone skills from the BMAD Method.",
     "longDescription": "Standalone skills extracted from the BMAD Method that are useful on their own, outside the full planning-to-implementation workflow. From the team behind BMAD-METHOD.",
     "developerName": "BMad Code Open Source Team",
     "category": "Productivity",
