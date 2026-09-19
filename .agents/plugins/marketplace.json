@@ -17,10 +17,10 @@
       "category": "Productivity"
     },
     {
-      "name": "bmad-toolbox",
+      "name": "bmad-core-tools",
       "source": {
         "source": "local",
-        "path": "./plugins/toolbox"
+        "path": "./plugins/core-tools"
       },
       "policy": {
         "installation": "AVAILABLE",

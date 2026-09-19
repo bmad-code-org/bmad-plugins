@@ -10,10 +10,16 @@ ecosystems share the same skills trees).
 
 Routing: SOURCES maps each source repo to the modules it ships, and a skill's
 `module` key names the plugin directory it ships in, so a module comes
-entirely from the one source that declares it. Each manifest must carry
-exactly the keys module, version, update_source, and knowledge --
-update_source naming its own source repo, and version and knowledge each
-identical across every skill in its module, whatever they say.
+entirely from the one source that declares it. Each manifest must carry the
+keys module, version, update_source and knowledge -- update_source naming its
+own source repo, and version identical across every skill in its module,
+whatever it says. Any other key is the skill's own business: the runtime
+ignores keys it does not know, so this script does too.
+
+knowledge lists documents inside the skill that names them, requires is what
+that skill cannot work without, and recommends is what it works better with.
+All three belong to the skill rather than the module, so skills of one module
+may differ on any of them. All three are copied through untouched.
 
 A version belongs to a module, not to a release of this repo: what a plugin
 ships as is its own module's version, and two modules need not agree, whether
@@ -39,7 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parent
 # Source repo -> the modules it ships. A module name is both the plugin
 # directory (plugins/<module>) and the plugin itself (bmad-<module>).
 SOURCES = {
-    "bmad-code-org/BMAD-METHOD": ("method", "toolbox"),
+    "bmad-code-org/BMAD-METHOD": ("method", "core-tools"),
 }
 PLUGINS = tuple(module for modules in SOURCES.values() for module in modules)
 MANIFEST_KEYS = frozenset({"module", "version", "update_source", "knowledge"})
@@ -69,15 +75,24 @@ def read_manifest(skill_dir, slug):
             manifest = tomllib.load(f)
         except tomllib.TOMLDecodeError as e:
             fail(f"{slug}/{skill_dir.name}: {e}")
-    if set(manifest) != MANIFEST_KEYS:
-        fail(
-            f"{slug}/{skill_dir.name}: keys must be exactly {', '.join(sorted(MANIFEST_KEYS))}; "
-            f"found {', '.join(sorted(manifest)) or 'none'}"
-        )
+    # The runtime ignores keys it does not know, so a build must not refuse them.
+    missing = MANIFEST_KEYS - set(manifest)
+    if missing:
+        fail(f"{slug}/{skill_dir.name}: manifest is missing {', '.join(sorted(missing))}")
     if manifest["update_source"] != update_source(slug):
         fail(f"{slug}/{skill_dir.name}: update_source must be exactly {update_source(slug)!r}")
-    if not isinstance(manifest["knowledge"], str) or not manifest["knowledge"].strip():
-        fail(f"{slug}/{skill_dir.name}: knowledge must be a non-empty string")
+    knowledge = manifest["knowledge"]
+    if not isinstance(knowledge, list) or not knowledge:
+        fail(f"{slug}/{skill_dir.name}: knowledge must be a non-empty list of paths inside the skill")
+    for entry in knowledge:
+        if not isinstance(entry, str) or not entry:
+            fail(f"{slug}/{skill_dir.name}: knowledge has invalid value {entry!r}")
+        # The plugin ships a copy of the skill, so a document must live inside it.
+        parts = entry.split("/")
+        if entry.startswith("/") or "://" in entry or "\\" in entry or ":" in entry or ".." in parts:
+            fail(f"{slug}/{skill_dir.name}: knowledge has unsafe value {entry!r}")
+        if not (skill_dir / entry).is_file():
+            fail(f"{slug}/{skill_dir.name}: knowledge names {entry!r}, which the skill does not ship")
     return manifest
 
 
@@ -100,14 +115,14 @@ def collect_skills(skills_root, slug, modules):
     for module, entries in found.items():
         if not entries:
             fail(f"{slug} ships no skills for module `{module}`")
-        # A module speaks for itself, so these values are whatever it says --
-        # but every skill in one module must say the same thing. Modules need
-        # not agree with each other, even within one source repo.
-        for key in ("version", "knowledge"):
-            values = {skill_dir.name: manifest[key] for skill_dir, manifest in entries}
-            if len(set(values.values())) > 1:
-                detail = ", ".join(f"{name}={value!r}" for name, value in sorted(values.items()))
-                fail(f"module `{module}` skills disagree on {key}: {detail}")
+        # A module speaks for itself, so its version is whatever it says -- but
+        # every skill in one module must agree, because the plugin ships as one
+        # version. Modules need not agree with each other, even within one
+        # source repo. knowledge, requires and recommends are per-skill.
+        versions = {skill_dir.name: manifest["version"] for skill_dir, manifest in entries}
+        if len(set(versions.values())) > 1:
+            detail = ", ".join(f"{name}={value!r}" for name, value in sorted(versions.items()))
+            fail(f"module `{module}` skills disagree on version: {detail}")
         collected[module] = ([skill_dir for skill_dir, _ in entries], entries[0][1]["version"])
     return collected
 

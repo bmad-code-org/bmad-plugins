@@ -31,11 +31,11 @@
       }
     },
     {
-      "name": "bmad-toolbox",
-      "displayName": "BMAD Toolbox",
-      "source": "./plugins/toolbox",
+      "name": "bmad-core-tools",
+      "displayName": "BMAD Core Tools",
+      "source": "./plugins/core-tools",
       "strict": false,
-      "description": "BMAD Toolbox — generally useful standalone skills from the BMAD Method.",
+      "description": "BMAD Core Tools — generally useful standalone skills from the BMAD Method.",
       "version": "6.13.0-next",
       "author": {
         "name": "Brian (BMad) Madison"
